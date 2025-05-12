@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Password Generator</title>
+  <style>
+    :root {
+      --bg-color: #121212;
+      --text-color: #fff;
+      --box-color: #1e1e1e;
+      --accent-color: #00adb5;
+    }
+
+    body.light {
+      --bg-color: #f0f0f0;
+      --text-color: #000;
+      --box-color: #fff;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .container {
+      background: var(--box-color);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+      width: 330px;
+      transition: background 0.3s;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label, input[type="range"] {
+      display: block;
+      margin: 10px 0;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: var(--accent-color);
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    #password {
+      background: #333;
+      padding: 10px;
+      margin: 10px 0;
+      text-align: center;
+      border-radius: 5px;
+      font-size: 16px;
+      word-break: break-word;
+      color: #fff;
+    }
+
+    #strengthBar {
+      height: 8px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      background: #0cd448bb;
+    }
+
+    .strength-weak { background: red; width: 25%; }
+    .strength-medium { background: orange; width: 50%; }
+    .strength-strong { background: yellowgreen; width: 75%; }
+    .strength-very-strong { background: green; width: 100%; }
+
+    .toggle {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .toggle button {
+      background: transparent;
+      border: 1px solid var(--accent-color);
+      color: var(--text-color);
+      padding: 6px;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Password Generator</h2>
+
+    <div class="toggle">
+      <button onclick="toggleMode()">🌗 Toggle Dark/Light Mode</button>
+    </div>
+
+    <label>Password Length: <span id="lengthVal">12</span></label>
+    <input type="range" min="4" max="32" value="12" id="lengthSlider">
+
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="uppercase" checked> Include Uppercase</label>
+      <label><input type="checkbox" id="lowercase" checked> Include Lowercase</label>
+      <label><input type="checkbox" id="numbers" checked> Include Numbers</label>
+      <label><input type="checkbox" id="symbols"> Include Symbols</label>
+    </div>
+
+    <button onclick="generatePassword()">Generate Password</button>
+    <div id="password">Your password will appear here</div>
+    <div id="strengthBar"></div>
+    <button onclick="copyPassword()">Copy to Clipboard</button>
+  </div>
+
+  <script>
+    const lengthSlider = document.getElementById("lengthSlider");
+    const lengthVal = document.getElementById("lengthVal");
+    const passwordDisplay = document.getElementById("password");
+    const strengthBar = document.getElementById("strengthBar");
+
+    lengthSlider.oninput = () => {
+      lengthVal.textContent = lengthSlider.value;
+    };
+
+    function generatePassword() {
+      const length = lengthSlider.value;
+      const includeUpper = document.getElementById("uppercase").checked;
+      const includeLower = document.getElementById("lowercase").checked;
+      const includeNumber = document.getElementById("numbers").checked;
+      const includeSymbol = document.getElementById("symbols").checked;
+
+      const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const lower = "abcdefghijklmnopqrstuvwxyz";
+      const numbers = "0123456789";
+      const symbols = "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+
+      let chars = "";
+      if (includeUpper) chars += upper;
+      if (includeLower) chars += lower;
+      if (includeNumber) chars += numbers;
+      if (includeSymbol) chars += symbols;
+
+      if (!chars) {
+        passwordDisplay.textContent = "Please select at least one option!";
+        return;
+      }
+
+      let password = "";
+      for (let i = 0; i < length; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+
+      passwordDisplay.textContent = password;
+      evaluateStrength(password);
+    }
+
+    function evaluateStrength(password) {
+      const length = password.length;
+      let strengthScore = 0;
+      if (/[a-z]/.test(password)) strengthScore++;
+      if (/[A-Z]/.test(password)) strengthScore++;
+      if (/[0-9]/.test(password)) strengthScore++;
+      if (/[^A-Za-z0-9]/.test(password)) strengthScore++;
+      if (length >= 12) strengthScore++;
+
+      strengthBar.className = "";
+      if (strengthScore <= 2) {
+        strengthBar.classList.add("strength-weak");
+      } else if (strengthScore === 3) {
+        strengthBar.classList.add("strength-medium");
+      } else if (strengthScore === 4) {
+        strengthBar.classList.add("strength-strong");
+      } else {
+        strengthBar.classList.add("strength-very-strong");
+      }
+    }
+
+    function copyPassword() {
+      const text = passwordDisplay.textContent;
+      if (text && !text.includes("Please")) {
+        navigator.clipboard.writeText(text).then(() => {
+          alert("Password copied to clipboard!");
+        });
+      }
+    }
+
+    function toggleMode() {
+      document.body.classList.toggle("light");
+    }
+  </script>
+</body>
+</html>

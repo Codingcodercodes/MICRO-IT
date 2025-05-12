@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purple Luxe - E-Commerce</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- NAVIGATION -->
+    <nav class="navbar glass">
+        <div class="nav-logo">Purple<span>Luxe</span></div>
+        <div class="nav-links">
+            <a href="#products">Shop</a>
+            <a href="#cart" id="cart-link">Cart (<span id="cart-count">0</span>)</a>
+            <a href="#profile" id="profile-link" class="hidden">Profile</a>
+            <button id="login-btn" onclick="showModal('login-modal')">Login</button>
+            <button id="register-btn" onclick="showModal('register-modal')">Register</button>
+            <button id="logout-btn" class="hidden" onclick="logoutUser()">Logout</button>
+        </div>
+    </nav>
+
+    <!-- LOGIN MODAL -->
+    <div class="modal" id="login-modal">
+        <form class="modal-content" onsubmit="handleLogin(event)">
+            <h2>Sign In</h2>
+            <input type="email" id="login-email" placeholder="Email" required>
+            <input type="password" id="login-password" placeholder="Password" required>
+            <button type="submit">Login</button>
+            <p>Don't have an account? <a href="#" onclick="switchModal('login-modal','register-modal')">Register</a></p>
+            <span class="modal-close" onclick="closeModal('login-modal')">&times;</span>
+        </form>
+    </div>
+
+    <!-- REGISTER MODAL -->
+    <div class="modal" id="register-modal">
+        <form class="modal-content" onsubmit="handleRegister(event)">
+            <h2>Create Account</h2>
+            <input type="text" id="register-name" placeholder="Full Name" required>
+            <input type="email" id="register-email" placeholder="Email" required>
+            <input type="password" id="register-password" placeholder="Password" required>
+            <button type="submit">Register</button>
+            <p>Already have an account? <a href="#" onclick="switchModal('register-modal','login-modal')">Login</a></p>
+            <span class="modal-close" onclick="closeModal('register-modal')">&times;</span>
+        </form>
+    </div>
+
+    <!-- PROFILE SECTION -->
+    <section id="profile" class="profile-section hidden glass">
+        <h2>My Profile</h2>
+        <div id="profile-info"></div>
+        <h3>Order History</h3>
+        <div id="order-history"></div>
+    </section>
+
+    <!-- PRODUCT GRID -->
+    <main id="products">
+        <h1 class="main-title">Discover Your Style</h1>
+        <div class="product-grid" id="product-list"></div>
+    </main>
+
+    <!-- CART SIDEBAR -->
+    <aside id="cart" class="cart-sidebar glass">
+        <h2>Shopping Cart</h2>
+        <div class="cart-items"></div>
+        <div class="cart-total">Total: $0.00</div>
+        <button class="checkout-btn" onclick="checkout()">Checkout</button>
+        <span class="sidebar-close" onclick="toggleCart()">&times;</span>
+    </aside>
+
+    <footer>
+        <p>&copy; 2025 PurpleLuxe. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
